@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportOP</title>
+    <link rel = "icon" type = "image/x-icon">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <h1>SportOP</h1>
+        <nav>
+            <ul class="nav-list">
+                <li><a href="">my hockeypucks</a></li>
+                <li><a href="create.html">add hockeypuck</a></li>
+            </ul>
+        </nav>
+
+        <div class= "search-hockeypuck">
+            <input 
+                type="text" 
+                id="find-hockeypuck"
+                name="find-hockeypuck"
+                class="find-hockeypuck"
+                placeholder="Enter  name"
+            >
+            <button class="clear-search-bar" id ="clear-search-bar">Delete</button>
+        </div>
+    </header>
+
+    <section class="hockeypucks-section">
+        
+        <div class="hockeypucks-manager">
+            <div class="sort-manager">
+                <label for="sort-select">Sort</label>
+                <select name="sort-select" id="sort-select" onchange="visualiseSortedHockeyPucks()">
+                    <option value="none">choose</option>
+                    <option value="price">price</option>
+                </select>
+            </div>
+            <div class="calculate-price">
+                <button id="calculate-price__button" onclick="calculatePrice()">Count</button>
+                <label id="total-price" class="total-price">Total price: </label>
+            </div>
+
+        </div>
+        <ul id="hockeypucks-list" class="hockeypucks-list"></ul>
+    </section>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
