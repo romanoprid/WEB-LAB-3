@@ -37,7 +37,8 @@
 .delete-button{
     width: 100%;
     background-color: red;
-    color: white
+    color: white;
+    margin-left: 23px;
 }
 .delete-button:hover{
     background-color: blue;
@@ -94,4 +95,24 @@
 
 .total-price{
     color: white;
+}
+
+.form__edit_hockeypuck{
+    display: none;
+    max-width: 85%;
+    min-height: 5rem;
+}
+
+.form__edit_hockeypuck div input{
+    border: none;
+}
+
+
+.hide{
+    display: none !important;
+}
+
+.open{
+    display: flex !important;
+    flex-direction: column;
 }
