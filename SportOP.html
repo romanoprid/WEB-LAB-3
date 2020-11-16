@@ -15,7 +15,7 @@
         <nav>
             <ul class="nav-list">
                 <li><a href="">my hockeypucks</a></li>
-                <li><a href="create.html">add hockeypuck</a></li>
+                <li><a  id="create_hockeypuck_open_button" class="create_hockeypuck_open_button">add hockeypuck</a></li>
             </ul>
         </nav>
 
@@ -50,6 +50,29 @@
         <ul id="hockeypucks-list" class="hockeypucks-list"></ul>
     </section>
 
+    <section class="create_hockeypuck" id="create_hockeypuck">
+        <div id="cross" class="cross">👟</div>
+        <form class="form__create_hockeypuck" , id="form__create_hockeypuck">
+            <h1>CREATE HOCKEYPUCK</h1>
+
+            <div>
+                <label>Name</label>
+                <input id="create_name" name="name" type="text" required>
+            </div>
+            <div>
+                <label>Amount</label>
+                <input id="create_amount" name="amount" type="number" step=0.1 required>
+            </div>
+            <div>
+                <label>Price in UAH</label>
+                <input id="create_priceInUAH" name="priceInUAH" type="number" required>
+            </div>
+            <button type="button" id="create_button" onclick="createHockeypuck()">Create</button>
+        </form>
+    </section>
+
+
+    <script src="js/create_edit.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
