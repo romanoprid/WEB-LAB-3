@@ -2,50 +2,62 @@ const hockeypuckList = document.getElementById('hockeypucks-list');
 const searchBar = document.getElementById('find-hockeypuck');
 const clearButton = document.getElementById('clear-search-bar');
 
-
+const createHockeypuckID = document.getElementById('create_id');
 const createHockeypuckName = document.getElementById('create_name');
 const createHockeypuckAmount = document.getElementById('create_amount');
 const createHockeypuckPrice = document.getElementById('create_priceInUAH');
 
-let editActive = false;
+var editActive = false;
 
-const hockeypucks_url = 'http://localhost:8080/hockeypucks';
 
-let hockeypucks = [];
-function fetchData(url){
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data)
-            for (i = 0; i < data.length; i++){
-                hockeypucks.push(data[i]);
-            }
-            displayHockeypucks(hockeypucks);
-        });
-}
+let hockeypucks = [
+    {
+        id: 1,
+        name: "Lion",
+        amount: 4,
+        priceInUAH: 100
+    },
+    {
+        id: 2,
+        name: "North",
+        amount: 45,
+        priceInUAH: 500
+    },
+    {
+        id: 3,
+        name: "Bears",
+        amount: 65,
+        priceInUAH: 700
+    },
+    {
+        id: 4,
+        name: "Bull",
+        amount: 100,
+        priceInUAH: 600
+    }
+]
+let currentHockeypucks = hockeypucks;
 
-let currentHockeypucks = hockeypucks
-
-searchBar.addEventListener('keyup', filterHockeypucks)
-function filterHockeypucks(searchString){
+searchBar.addEventListener('keyup', (searchString) => {
     const searchFilterString = searchString.target.value.toLowerCase();
-    const filteredHockeypucks = hockeypucks.filter(hockeypuck =>{
+    const filteredHockeypuck = hockeypucks.filter(hockeypuck => {
         return hockeypuck.name.toLowerCase().includes(searchFilterString);
     });
-    currentHockeypucks = filteredHockeypucks;
+    currentHockeypucks = filteredHockeypuck;
     visualiseSortedHockeyPucks();
-}
-clearButton.addEventListener('click', ()=> {
+})
+
+clearButton.addEventListener('click', () => {
     searchBar.value = '';
     currentHockeypucks = hockeypucks;
     visualiseSortedHockeyPucks();
 })
 
 
-function calculatePrice(){
+function calculatePrice() {
     var priceSum = 0;
     var totalPriceLabel = document.getElementById('total-price');
-    currentHockeypucks.forEach(hockeypuck => priceSum += hockeypuck.price_in_uah);
+    currentHockeypucks.forEach(hockeypuck => priceSum += hockeypuck.priceInUAH);
     totalPriceLabel.textContent = 'Total price: ' + priceSum + 'UAH';
 }
 
@@ -62,10 +74,10 @@ function visualiseSortedHockeyPucks() {
     displayHockeypucks(currentHockeypucks);
 }
 
-function compareByPrice(firstHockeypuck, secondHockeypuck){
-    return firstHockeypuck.price_in_uah - secondHockeypuck.price_in_uah;
-}
 
+function compareByPrice(firstHockeypuck, secondHockeypuck) {
+    return firstHockeypuck.priceInUAH - secondHockeypuck.priceInUAH;
+}
 
 const displayHockeypucks = (hockeypucksToShow) => {
     const htmlString = hockeypucksToShow.map((hockeypuck)=>{
@@ -75,7 +87,7 @@ const displayHockeypucks = (hockeypucksToShow) => {
                 <h2 class="hockeypuck_id"> ${hockeypuck.id}</h2>
                 <h2> ${hockeypuck.name}</h2>
                 <h3 class="amount">Amount: ${hockeypuck.amount}</h3>
-                <h3 class="priceInUAH">Price: ${hockeypuck.price_in_uah}</h3>
+                <h3 class="priceInUAH">Price: ${hockeypuck.priceInUAH}</h3>
             </div>
             <form class="form__edit_hockeypuck" id="form__edit_hockeypuck">
                     <input id="edit_name" name="name" type="text" placeholder="Name">
@@ -92,18 +104,18 @@ const displayHockeypucks = (hockeypucksToShow) => {
 
     hockeypuckList.innerHTML = htmlString;
 }
-
 function deleteRecord(record){
     const list_to_delete = record.parentNode.parentNode;
     let hockeypuckId = parseInt(list_to_delete.childNodes[1].childNodes[1].innerHTML);
     let indexToDeleteFromAll = hockeypucks.findIndex(obj => obj.id==hockeypuckId);
     hockeypucks.splice(indexToDeleteFromAll, 1);
-    let indexToDeleteFromCurrent = currentHockeypucks.findIndex(obj => obj.id==hockeypuckId);
-    if (indexToDeleteFromCurrent != -1){
+    if (searchBar.value != ''){
+        let indexToDeleteFromCurrent = currentHockeypucks.findIndex(obj => obj.id==hockeypuckId);
+        console.log(indexToDeleteFromCurrent);
         currentHockeypucks.splice(indexToDeleteFromCurrent, 1);
     }
-    deleteHockeypuck(hockeypuckId);
     visualiseSortedHockeyPucks();
+    console.log(hockeypucks, currentHockeypucks);
     return list_to_delete;
 }
 function editRecord(record){
@@ -115,125 +127,75 @@ function editRecord(record){
     let hockeypuckAmount = parseFloat(infoBar.childNodes[5].innerHTML);
     let hockeypuckPrice = parseFloat(infoBar.childNodes[7].innerHTML);
     const editedHockeypuckName = nodeList[3][0];
-    const editedHockeypuckAmount  = nodeList[3][1];
+    const editedHockeypuckAmount = nodeList[3][1];
     const editedHockeypuckPrice = nodeList[3][2];
 
     let indexToEdit = hockeypucks.findIndex(obj => obj.id==hockeypuckId);
     if (editActive == false){
-        openEditBar(editBar, infoBar);
-        editActive = true;
+        editBar.classList.add('open');
+        editBar.classList.remove('hide');
+        infoBar.classList.add('hide');
+        infoBar.classList.remove('open');
+        editActive = true
     } else if (editActive == true){
-        closeEditBar(editBar, infoBar);
-        if (validateAmountAndPrice(editedHockeypuckAmount .value, editedHockeypuckPrice.value) == false){
-            editedHockeypuckAmount .value = '';
+        editBar.classList.add('hide');
+        editBar.classList.remove('open');
+        infoBar.classList.add('open');
+        infoBar.classList.remove('hide');
+
+        if (validateAmountAndPrice(editedHockeypuckAmount.value, editedHockeypuckPrice.value) == false){
+            editedHockeypuckAmount.value = '';
             editedHockeypuckPrice.value = '';
-            editActive = false;
             return;
         }
-        let finalName = hockeypuckName;
-        let finalAmount = hockeypuckAmount;
-        let finalPrice = hockeypuckPrice;
-        if (editedHockeypuckName.value == "" && editedHockeypuckAmount .value == "" && editedHockeypuckPrice.value == ""){
-            editActive = false;
-            visualiseSortedHockeyPucks();
-            return
-        }
+
         if (editedHockeypuckName.value != "") {
             hockeypucks[indexToEdit]["name"] = editedHockeypuckName.value;
-            finalName = editedHockeypuckName.value;
         } else {
             hockeypucks[indexToEdit]["name"] = hockeypuckName;
         }
-        if (editedHockeypuckAmount .value != "") {
-            hockeypucks[indexToEdit]["amount"] = parseFloat(editedHockeypuckAmount .value);
-            finalAmount =  parseFloat(editedHockeypuckAmount .value);
+        if (editedHockeypuckAmount.value != "") {
+            hockeypucks[indexToEdit]["amount"] = parseFloat(editedHockeypuckAmount.value);
         } else{
             hockeypucks[indexToEdit]["amount"] = hockeypuckAmount;
         }
         if (editedHockeypuckPrice.value != "") {
-            hockeypucks[indexToEdit]["price_in_uah"] =  parseFloat(editedHockeypuckPrice.value);
-            finalPrice = parseFloat(editedHockeypuckPrice.value);
+            hockeypucks[indexToEdit]["priceInUAH"] =  parseFloat(editedHockeypuckPrice.value)
         } else{
-            hockeypucks[indexToEdit]["price_in_uah"] = hockeypuckPrice;
+            hockeypucks[indexToEdit]["priceInUAH"] =  hockeypuckPrice
         }
 
-        if (searchBar.value != '' && editedHockeypuckName.value != '' && editedHockeypuckName.value.includes(searchBar.value) == false){
-            let indexToDeleteFromCurrent = currentHockeypucks.findIndex(obj => obj.id==hockeypuckId);
-            currentHockeypucks.splice(indexToDeleteFromCurrent, 1);
-        }
-
-        const jsonHockeypuck = createJSON(finalName, finalAmount, finalPrice)
-        editHockeypuck(hockeypuckId, jsonHockeypuck)
         editActive = false;
         visualiseSortedHockeyPucks();
     }
 }
-
-function openEditBar(editBar, infoBar){
-    editBar.classList.add('open');
-    editBar.classList.remove('hide');
-    infoBar.classList.add('hide');
-    infoBar.classList.remove('open');
-}
-
-function closeEditBar(editBar, infoBar){
-    editBar.classList.add('hide');
-    editBar.classList.remove('open');
-    infoBar.classList.add('open');
-    infoBar.classList.remove('hide');
-}
-async function createHockeypuck(){
-    if(validateFormRequirements(createHockeypuckName.value, createHockeypuckAmount.value, createHockeypuckPrice.value) == false){
+function createHockeypuck(){
+    if(validateFormRequirements(createHockeypuckID.value, createHockeypuckName.value, createHockeypuckAmount.value, createHockeypuckPrice.value) == false){
+        console.log('error');
         return;
     }
     if(validateAmountAndPrice(createHockeypuckAmount.value, createHockeypuckPrice.value) == false){
+        console.log('error');
         return;
     }
-    const jsonHockeypuck = createJSON(createHockeypuckName.value, createHockeypuckAmount.value, createHockeypuckPrice.value);
-    await postHockeypuck(jsonHockeypuck);
+    let json = createJSON(createHockeypuckID.value, createHockeypuckName.value, createHockeypuckAmount.value, createHockeypuckPrice.value);
+
+    hockeypucks.push(json)
+
     visualiseSortedHockeyPucks();
-    return jsonHockeypuck;
-}
-async function postHockeypuck(newHockeypuck) {
-    console.log(hockeypucks);
-    let response = await fetch(hockeypucks_url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8'
-        },
-        body: JSON.stringify(newHockeypuck)
-    }).then(response => response.json())
-        .then(data => hockeypucks.push(data))
-    return response;
+    return json;
 }
 
-async function deleteHockeypuck(id){
-    let response = await fetch(hockeypucks_url + '/' + id, {
-        method: 'DELETE',
-    })
-    return response;
-}
-async function editHockeypuck(id, editedHockeypuck){
-    fetch(hockeypucks_url + '/' + id, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8'
-        },
-        body: JSON.stringify(editedHockeypuck)
-    })
-}
-function createJSON(name, amount, price_in_uah){
-    let createdHockeypuck = {
+function createJSON(id, name, amount, price){
+    let createdHockeyPuck = {
+        "id": parseInt(id),
         "name": name,
         "amount": parseFloat(amount),
-        "price_in_uah": parseFloat(price_in_uah)
+        "priceInUAH": parseFloat(price)
     }
-    return createdHockeypuck;
+    return createdHockeyPuck;
+
 }
-
-
-
-
 function validateAmountAndPrice(amount, price){
     if (parseFloat(amount) <=0){
         alert('amount cannot be less then zero');
@@ -245,7 +207,11 @@ function validateAmountAndPrice(amount, price){
     }
     return true;
 }
-function validateFormRequirements(name, amount, price){
+function validateFormRequirements(id, name, amount, price){
+    if(id == ''){
+        alert('id field is requiered')
+        return false;
+    }
     if(name == ''){
         alert('name field is requiered')
         return false;
@@ -262,4 +228,12 @@ function validateFormRequirements(name, amount, price){
 }
 
 
-fetchData(hockeypucks_url);
+
+displayHockeypucks(currentHockeypucks)
+
+
+
+
+
+
+
